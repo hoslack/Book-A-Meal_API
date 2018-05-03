@@ -15,6 +15,8 @@ def create_app(config_name):
     Migrate(app, db)
     from .auth import auth_blueprint  # include the views, in form of blueprints
     from .meals import meals_blueprint
+    from .orders import orders_blueprint
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(meals_blueprint)
+    app.register_blueprint(orders_blueprint)
     return app
