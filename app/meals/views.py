@@ -34,6 +34,17 @@ class MealsView(MethodView):
         else:
             return jsonify({'message': 'Meal exists'})
 
+    def get(self):
+        """This method gets all meals from the database"""
+        try:
+            meals = Meal.query.all()
+            meal_data = []
+            for meal in meals:
+                meal_data.append({'id': meal.id, 'name': meal.name, 'price': meal.price})
+
+            return jsonify({'data': meal_data})
+        except Exception as e:
+            return jsonify({'Error occurred'.format(e)})
 
 
 class MealView(MethodView):
