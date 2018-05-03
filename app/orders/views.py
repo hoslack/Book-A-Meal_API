@@ -14,10 +14,8 @@ class OrdersView(MethodView):
         """This method is for adding an order into the database"""
         json_data = request.get_json(force=True)
         customer_id = json_data.get('customer_id')
-        meal1 = json_data.get('meal1')
-        meal2 = json_data.get('meal2')
         price = json_data.get('price')
-        meal_name = '{} and {}'.format(meal1, meal2)
+        meal_name = json_data.get('meals')
 
         # check if meals exist
         meal = Order.query.filter_by(meals=meal_name).first()
@@ -34,9 +32,7 @@ class OrdersView(MethodView):
                     return jsonify({'message': 'No price provided'})
                 if not isinstance(price, int):
                     return jsonify({'message': 'Invalid price'})
-                if not isinstance(meal1, str):
-                    return jsonify({'message': 'Invalid meal name'})
-                if not isinstance(meal2, str):
+                if not isinstance(meal_name, str):
                     return jsonify({'message': 'Invalid meal name'})
 
                 order = Order(customer_id=customer_id, meals=meal_name, price=price)
@@ -74,8 +70,7 @@ class OrderView(MethodView):
         if not isinstance(order_id, int):
             return jsonify({'message': 'Invalid order ID'})
         json_data = request.get_json(force=True)
-        meal1 = json_data.get('meal1')
-        meal2 = json_data.get('meal2')
+        meal_name = json_data.get('meals')
         price = json_data.get('price')
         # check if order exists
         order = Order.query.filter_by(id=order_id).first()
@@ -83,18 +78,16 @@ class OrderView(MethodView):
             if not order:
                 return jsonify({'message': 'Order does not exist'})
             # check if order name exists
-            if not meal1 and not meal2:
+            if not meal_name:
                 return jsonify({'message': 'No meals provided'})
             # check if price exists
             if not price:
                 return jsonify({'message': 'No price provided'})
             if not isinstance(price, int):
                 return jsonify({'message': 'Invalid price'})
-            if not isinstance(meal1, str):
+            if not isinstance(meal_name, str):
                 return jsonify({'message': 'Invalid meal name'})
-            if not isinstance(meal2, str):
-                return jsonify({'message': 'Invalid meal name'})
-            order.meals = '{} and {}'.format(meal1, meal2)
+            order.meals = meal_name
             order.price = price
             order.save()
             return jsonify({'message': 'Success'})
@@ -102,7 +95,7 @@ class OrderView(MethodView):
             return jsonify({'message': 'Error occurred {}'.format(e)})
 
 
-#  define the meals class-based view
+#  define the order class-based view
 orders_view = OrdersView.as_view('orders_view')
 order_view = OrderView.as_view('order_view')
 
