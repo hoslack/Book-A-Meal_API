@@ -13,7 +13,11 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     Migrate(app, db)
+
+    from .auth import auth_blueprint
+    app.register_blueprint(auth_blueprint)
     return app
+
 
 
 
