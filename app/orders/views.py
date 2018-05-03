@@ -47,6 +47,21 @@ class OrdersView(MethodView):
         else:
             return jsonify({'message': 'order exists'})
 
+    def get(self):
+        """This is a method for getting all orders from the database"""
+        try:
+            orders = Order.query.all()
+            order_data = []
+
+            #  make the data json serializable
+            for order in orders:
+                order_data.append({'id': order.id, 'customer_id': order.customer_id, 'meals': order.meals,
+                                   'price': order.price})
+            return jsonify({'data': order_data})
+        except Exception as e:
+            return jsonify({'Error occurred'.format(e)})
+
+
 
 #  define the meals class-based view
 orders_view = OrdersView.as_view('orders_view')

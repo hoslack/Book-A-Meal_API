@@ -98,7 +98,7 @@ class MenuItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     meals = db.Column(db.String(256), nullable=False)
-    price = db.Column(db.Integer(256), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
 
     def __init__(self, meals, price):
         """ Initialize menu item"""
