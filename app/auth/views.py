@@ -15,20 +15,20 @@ class SignUpView(MethodView):
         """This method handles the registration route"""
 
         json_data = request.get_json(force=True)
-        email = json_data['email']
-        password = json_data['password']
+        email = json_data.get('email')
+        password = json_data.get('password')
         # check if user exists
-        user = User.query.filter_by(email=json_data['email']).first()
+        user = User.query.filter_by(email=json_data.get('email')).first()
 
         if not user:
             try:
                 # check if password exists
-                if not json_data['password']:
+                if not json_data.get('password'):
                     return jsonify({'message': 'No password provided'})
                 if len(password) < 8:
                     return jsonify({'message': 'Password too short'})
                 # check if email exists
-                if not json_data['email']:
+                if not json_data.get('email'):
                     return jsonify({'message': 'No email provided'})
                 regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
                 if not re.match(regex, email):
@@ -51,8 +51,8 @@ class LoginView(MethodView):
     def post(self):
         """A method for handling the log in request endpoint"""
         json_data = request.get_json(force=True)
-        email = json_data['email']
-        password = json_data['password']
+        email = json_data.get('email')
+        password = json_data.get('password')
         try:
             # check if password exists
             if not email:

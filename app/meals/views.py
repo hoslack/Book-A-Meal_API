@@ -12,8 +12,8 @@ class MealsView(MethodView):
     def post(self):
         """This is a method to add a meal into the database"""
         json_data = request.get_json(force=True)
-        name = json_data['name']
-        price = json_data['price']
+        name = json_data.get('name')
+        price = json_data.get('price')
         # check if meal exists
         meal = Meal.query.filter_by(name=name).first()
 
@@ -61,8 +61,8 @@ class MealView(MethodView):
         if not isinstance(meal_id, int):
             return jsonify({'message': 'Invalid meal ID'})
         json_data = request.get_json(force=True)
-        name = json_data['name']
-        price = json_data['price']
+        name = json_data.get('name')
+        price = json_data.get('price')
         meal = Meal.query.filter_by(id=meal_id).first()  # check if meal exists
         try:
             if not meal:
