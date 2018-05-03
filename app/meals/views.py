@@ -69,14 +69,14 @@ class MealView(MethodView):
                 return jsonify({'message': 'Meal does not exist'})
             # check if meal name exists exists
             if not name:
-                return jsonify({'message': 'No name provided provided'})
+                return jsonify({'message': 'No name provided'})
             # check if price exists
             if not price:
-                return jsonify({'message': 'No email provided'})
+                return jsonify({'message': 'No price provided'})
             if not isinstance(price, int):
                 return jsonify({'message': 'Invalid price'})
             if not isinstance(name, str):
-                return jsonify({'message': 'Invalid price'})
+                return jsonify({'message': 'Invalid name'})
             meal.name = name
             meal.price = price
             meal.save()
