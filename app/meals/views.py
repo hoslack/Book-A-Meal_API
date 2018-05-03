@@ -1,0 +1,79 @@
+from flask.views import MethodView
+from flask import jsonify
+from flask import request
+from app.models.models import Meal
+from . import meals_blueprint
+
+
+class MealsView(MethodView):
+    def __init__(self):
+        super().__init__()
+
+    def post(self):
+        """This is a method to add a meal into the database"""
+        json_data = request.get_json(force=True)
+        name = json_data['name']
+        price = json_data['price']
+        meal = Meal.query.filter_by(name=name).first()  # check if meal exists
+
+        if not meal:
+            try:
+                if not name:  # check if meal name exists exists
+                    return jsonify({'message': 'No name provided provided'})
+                if not price:  # check if price exists
+                    return jsonify({'message': 'No email provided'})
+                if not isinstance(price, int):
+                    return jsonify({'message': 'Invalid price'})
+                if not isinstance(name, str):
+                    return jsonify({'message': 'Invalid price'})
+                meal = Meal(name=name, price=price)
+                meal.save()
+                return jsonify({'message': 'Success', 'id': meal.id})
+            except Exception as e:
+                return jsonify({'message': 'Error occurred {}'.format(e)})
+        else:
+            return jsonify({'message': 'Meal exists'})
+
+
+
+class MealView(MethodView):
+    def __init__(self):
+        super().__init__()
+
+    def put(self, meal_id):
+        """This is a method to edit the details of a meal"""
+        if not meal_id:
+            return jsonify({'message': 'Please provide the meal ID'})
+        if not isinstance(meal_id, int):
+            return jsonify({'message': 'Invalid meal ID'})
+        json_data = request.get_json(force=True)
+        name = json_data['name']
+        price = json_data['price']
+        meal = Meal.query.filter_by(id=meal_id).first()  # check if meal exists
+        try:
+            if not meal:
+                return jsonify({'message': 'Meal does not exist'})
+            if not name:  # check if meal name exists exists
+                return jsonify({'message': 'No name provided provided'})
+            if not price:  # check if price exists
+                return jsonify({'message': 'No email provided'})
+            if not isinstance(price, int):
+                return jsonify({'message': 'Invalid price'})
+            if not isinstance(name, str):
+                return jsonify({'message': 'Invalid price'})
+            meal.name = name
+            meal.price = price
+            meal.save()
+            return jsonify({'message': 'Success'})
+        except Exception as e:
+            return jsonify({'message': 'Error occurred {}'.format(e)})
+
+
+#  define the meals class-based view
+meals_view = MealsView.as_view('meals_view')
+meal_view = MealView.as_view('meal_view')
+
+
+# add a url to be used to reach the view
+meals_blueprint.add_url_rule('/meals/', view_func=meals_view, methods=['GET', 'POST'])
+meals_blueprint.add_url_rule('/meals/<int:meal_id>/', view_func=meal_view, methods=['PUT'])

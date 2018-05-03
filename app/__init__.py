@@ -2,10 +2,8 @@ from flask import Flask
 from instance.config import app_config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_bcrypt import Bcrypt
 
 db = SQLAlchemy()
-bcrypt = ''
 
 
 def create_app(config_name):
@@ -15,9 +13,10 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     Migrate(app, db)
-    bcrypt = Bcrypt(app)
-    from .auth import auth_blueprint
+    from .auth import auth_blueprint  # include the views, in form of blueprints
+    from .meals import meals_blueprint
     app.register_blueprint(auth_blueprint)
+    app.register_blueprint(meals_blueprint)
     return app
 
 
