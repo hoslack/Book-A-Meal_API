@@ -17,15 +17,18 @@ class SignUpView(MethodView):
         json_data = request.get_json(force=True)
         email = json_data['email']
         password = json_data['password']
-        user = User.query.filter_by(email=json_data['email']).first()  # check if user exists
+        # check if user exists
+        user = User.query.filter_by(email=json_data['email']).first()
 
         if not user:
             try:
-                if not json_data['password']: # check if password exists
+                # check if password exists
+                if not json_data['password']:
                     return jsonify({'message': 'No password provided'})
                 if len(password) < 8:
                     return jsonify({'message': 'Password too short'})
-                if not json_data['email']: # check if email exists
+                # check if email exists
+                if not json_data['email']:
                     return jsonify({'message': 'No email provided'})
                 regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
                 if not re.match(regex, email):
@@ -51,11 +54,13 @@ class LoginView(MethodView):
         email = json_data['email']
         password = json_data['password']
         try:
-            if not email:  # check if password exists
+            # check if password exists
+            if not email:
                 return jsonify({'message': 'No password provided'})
             if len(password) < 8:
                 return jsonify({'message': 'Password too short'})
-            if not email:  # check if email exists
+            # check if email exists
+            if not email:
                 return jsonify({'message': 'No email provided'})
             regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
             if not re.match(regex, email):

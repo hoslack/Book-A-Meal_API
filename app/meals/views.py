@@ -14,13 +14,16 @@ class MealsView(MethodView):
         json_data = request.get_json(force=True)
         name = json_data['name']
         price = json_data['price']
-        meal = Meal.query.filter_by(name=name).first()  # check if meal exists
+        # check if meal exists
+        meal = Meal.query.filter_by(name=name).first()
 
         if not meal:
             try:
-                if not name:  # check if meal name exists exists
+                # check if meal name exists exists
+                if not name:
                     return jsonify({'message': 'No name provided provided'})
-                if not price:  # check if price exists
+                # check if price exists
+                if not price:
                     return jsonify({'message': 'No email provided'})
                 if not isinstance(price, int):
                     return jsonify({'message': 'Invalid price'})
@@ -64,9 +67,11 @@ class MealView(MethodView):
         try:
             if not meal:
                 return jsonify({'message': 'Meal does not exist'})
-            if not name:  # check if meal name exists exists
+            # check if meal name exists exists
+            if not name:
                 return jsonify({'message': 'No name provided provided'})
-            if not price:  # check if price exists
+            # check if price exists
+            if not price:
                 return jsonify({'message': 'No email provided'})
             if not isinstance(price, int):
                 return jsonify({'message': 'Invalid price'})
@@ -79,6 +84,21 @@ class MealView(MethodView):
         except Exception as e:
             return jsonify({'message': 'Error occurred {}'.format(e)})
 
+    def delete(self, meal_id):
+        """This is a method to delete a single meal from the database"""
+        if not meal_id:
+            return jsonify({'message': 'Please provide the meal ID'})
+        if not isinstance(meal_id, int):
+            return jsonify({'message': 'Invalid meal ID'})
+        meal = Meal.query.filter_by(id=meal_id).first()
+        try:
+            if not meal:
+                return jsonify({'message': 'Meal does not exist'})
+            meal.delete()
+            return jsonify({'message': 'Success'})
+        except Exception as e:
+            return jsonify({'message': 'Error occurred {}'.format(e)})
+
 
 #  define the meals class-based view
 meals_view = MealsView.as_view('meals_view')
@@ -87,4 +107,4 @@ meal_view = MealView.as_view('meal_view')
 
 # add a url to be used to reach the view
 meals_blueprint.add_url_rule('/meals/', view_func=meals_view, methods=['GET', 'POST'])
-meals_blueprint.add_url_rule('/meals/<int:meal_id>/', view_func=meal_view, methods=['PUT'])
+meals_blueprint.add_url_rule('/meals/<int:meal_id>/', view_func=meal_view, methods=['PUT', 'DELETE'])
