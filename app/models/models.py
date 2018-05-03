@@ -18,12 +18,12 @@ class User(db.Model):
     def __init__(self, email, password, admin=False):
         """Initialize a user """
         self.email = email
-        self.password = Bcrypt().generate_password_hash(password).decode()
+        self.password = Bcrypt().generate_password_hash(password).decode('utf-8')
         self.admin = admin
 
     def is_password_valid(self, password):
         """Compare password with the harsh to check validity"""
-        return Bcrypt.check_password_hash(self.password, password)
+        return Bcrypt().check_password_hash(self.password, password)
 
     def generate_token(self, user_id):
         """Generate an access token required to log in user"""
