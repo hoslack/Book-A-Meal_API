@@ -76,7 +76,7 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, nullable=False)
-    meals = db.Column(db.String, nullable=False)
+    meals = db.Column(db.String(256), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
     def __init__(self, customer_id, meals, price):
@@ -97,8 +97,8 @@ class MenuItem(db.Model):
     __tablename__ = 'menu_items'
 
     id = db.Column(db.Integer, primary_key=True)
-    meals = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    meals = db.Column(db.String(256), nullable=False)
+    price = db.Column(db.Integer(256), nullable=False)
 
     def __init__(self, meals, price):
         """ Initialize menu item"""
@@ -117,7 +117,7 @@ class Meal(db.Model):
     __tablename__ = 'meals'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(256), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
     def __init__(self, name, price):
