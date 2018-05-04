@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask import request
 from app.models.models import Meal
 from app.custom_http_respones.responses import Success, Error
-from decorators.decorators import admin_only
+from app.decorators.decorators import admin_only
 from . import meals_blueprint
 
 

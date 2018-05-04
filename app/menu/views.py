@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask import jsonify
 from flask import request
 from app.models.models import MenuItem
-from decorators.decorators import token_required, admin_only
+from app.decorators.decorators import token_required, admin_only
 from . import menu_blueprint
 
 
