@@ -3,6 +3,8 @@ from flask import jsonify
 from flask import request
 import re
 from app.models.models import User
+from app.custom_http_respones.responses import Success, Error
+from app.helpers.helpers import Helpers
 from . import auth_blueprint
 
 
@@ -10,6 +12,9 @@ class SignUpView(MethodView):
 
     def __init__(self):
         super().__init__()
+        self.helpers = Helpers()
+        self.success = Success()
+        self.error = Error()
 
     def post(self):
         """This method handles the registration route"""
@@ -47,6 +52,9 @@ class LoginView(MethodView):
     """This is a view for handling user login and assigning of tokens"""
     def __init__(self):
         super().__init__()
+        self.helpers = Helpers()
+        self.success = Success()
+        self.error = Error()
 
     def post(self):
         """A method for handling the log in request endpoint"""
@@ -62,8 +70,7 @@ class LoginView(MethodView):
             # check if email exists
             if not email:
                 return jsonify({'message': 'No email provided'})
-            regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-            if not re.match(regex, email):
+            if not self.helpers.email_valid(email):
                 return jsonify({'message': 'Invalid email'})
             # Get the user object
             user = User.query.filter_by(email=email).first()
