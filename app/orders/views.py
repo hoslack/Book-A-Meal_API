@@ -12,7 +12,7 @@ class OrdersView(MethodView):
         super().__init__()
 
     @token_required
-    def post(self):
+    def post(self, user_id):
         """This method is for adding an order into the database"""
         json_data = request.get_json(force=True)
         customer_id = json_data.get('customer_id')
@@ -46,7 +46,7 @@ class OrdersView(MethodView):
             return jsonify({'message': 'order exists'})
 
     @admin_only
-    def get(self):
+    def get(self, user_id):
         """This is a method for getting all orders from the database"""
         try:
             orders = Order.query.all()
@@ -67,7 +67,7 @@ class OrderView(MethodView):
         super().__init__()
 
     @token_required
-    def put(self, order_id):
+    def put(self, user_id, order_id):
         """This a method for handling editing of a single order"""
         if not order_id:
             return jsonify({'message': 'Please provide the order ID'})

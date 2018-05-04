@@ -1,5 +1,4 @@
 from flask.views import MethodView
-from flask import jsonify
 from flask import request
 from app.models.models import Meal
 from app.custom_http_respones.responses import Success, Error
@@ -36,7 +35,7 @@ class MealsView(MethodView):
                     return self.error.bad_request('Invalid price')
                 meal = Meal(name=name, price=price)
                 meal.save()
-                return self.error.bad_request('Success, id:{}'.format(meal.id))
+                return self.success.create_resource('Success, id:{}'.format(meal.id))
             except Exception as e:
                 return self.error.internal_server_error('Error occurred {}'.format(e))
         else:
