@@ -2,6 +2,7 @@ from flask.views import MethodView
 from flask import jsonify
 from flask import request
 from app.models.models import Meal
+from decorators.decorators import admin_only
 from . import meals_blueprint
 
 
@@ -9,7 +10,8 @@ class MealsView(MethodView):
     def __init__(self):
         super().__init__()
 
-    def post(self):
+    @admin_only
+    def post(self, user_id):
         """This is a method to add a meal into the database"""
         json_data = request.get_json(force=True)
         name = json_data.get('name')
@@ -37,7 +39,8 @@ class MealsView(MethodView):
         else:
             return jsonify({'message': 'Meal exists'})
 
-    def get(self):
+    @admin_only
+    def get(self, user_id):
         """This method gets all meals from the database"""
         try:
             meals = Meal.query.all()
@@ -54,7 +57,8 @@ class MealView(MethodView):
     def __init__(self):
         super().__init__()
 
-    def put(self, meal_id):
+    @admin_only
+    def put(self, user_id, meal_id):
         """This is a method to edit the details of a meal"""
         if not meal_id:
             return jsonify({'message': 'Please provide the meal ID'})
@@ -84,7 +88,8 @@ class MealView(MethodView):
         except Exception as e:
             return jsonify({'message': 'Error occurred {}'.format(e)})
 
-    def delete(self, meal_id):
+    @admin_only
+    def delete(self, user_id, meal_id):
         """This is a method to delete a single meal from the database"""
         if not meal_id:
             return jsonify({'message': 'Please provide the meal ID'})

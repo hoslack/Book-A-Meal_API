@@ -47,7 +47,7 @@ class User(db.Model):
             return str(e)
 
     @staticmethod
-    def decode_toke(token):
+    def decode_token(token):
         """A method to decode access token from header"""
         try:
             # decode the token using the SECRET

@@ -2,6 +2,7 @@ from flask.views import MethodView
 from flask import jsonify
 from flask import request
 from app.models.models import MenuItem
+from decorators.decorators import token_required, admin_only
 from . import menu_blueprint
 
 
@@ -10,7 +11,8 @@ class MenuView(MethodView):
     def __init__(self):
         super().__init__()
 
-    def post(self):
+    @admin_only
+    def post(self, user_id):
         """This method is for adding a menu item into the database"""
         json_data = request.get_json(force=True)
         meal1 = json_data.get('meal1')
@@ -39,7 +41,8 @@ class MenuView(MethodView):
         else:
             return jsonify({'message': 'menu item exists'})
 
-    def get(self):
+    @token_required
+    def get(self, user_id):
         """This is a method for getting all menu items from the database"""
         try:
             menu_items = MenuItem.query.all()

@@ -77,10 +77,7 @@ class LoginView(MethodView):
                 # Generate the access token to be used in header
                 access_token = user.generate_token(user.id)
                 if access_token:
-                    response = jsonify({
-                        'message': 'Log in successful',
-                        'access_token': access_token.decode()
-                    })
+                    response = 'Log in successful: id:{}'.format(access_token.decode())
                     return self.success.complete_request(response)
             else:
                 return self.error.unauthorized('Invalid email or password')

@@ -2,6 +2,7 @@ from flask.views import MethodView
 from flask import jsonify
 from flask import request
 from app.models.models import Order
+from decorators.decorators import token_required, admin_only
 from . import orders_blueprint
 
 
@@ -10,6 +11,7 @@ class OrdersView(MethodView):
     def __init__(self):
         super().__init__()
 
+    @token_required
     def post(self):
         """This method is for adding an order into the database"""
         json_data = request.get_json(force=True)
@@ -43,6 +45,7 @@ class OrdersView(MethodView):
         else:
             return jsonify({'message': 'order exists'})
 
+    @admin_only
     def get(self):
         """This is a method for getting all orders from the database"""
         try:
@@ -63,6 +66,7 @@ class OrderView(MethodView):
     def __init__(self):
         super().__init__()
 
+    @token_required
     def put(self, order_id):
         """This a method for handling editing of a single order"""
         if not order_id:
