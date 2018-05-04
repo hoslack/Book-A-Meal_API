@@ -1,7 +1,6 @@
 from flask.views import MethodView
 from flask import jsonify
 from flask import request
-import re
 from app.models.models import User
 from app.custom_http_respones.responses import Success, Error
 from app.helpers.helpers import Helpers
@@ -29,23 +28,22 @@ class SignUpView(MethodView):
             try:
                 # check if password exists
                 if not json_data.get('password'):
-                    return jsonify({'message': 'No password provided'})
+                    return self.error.bad_request('No password provided')
                 if len(password) < 8:
-                    return jsonify({'message': 'Password too short'})
+                    return self.error.bad_request('Password too short')
                 # check if email exists
                 if not json_data.get('email'):
-                    return jsonify({'message': 'No email provided'})
-                regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-                if not re.match(regex, email):
-                    return jsonify({'message': 'Invali email'})
+                    return self.error.bad_request('No email provided')
+                if not self.helpers.email_valid(email):
+                    return self.error.bad_request('Invalid email')
 
                 user = User(email=email, password=password)
                 user.save()
-                return jsonify({'message': 'Success'})
+                return self.success.create_resource('User created successfully')
             except Exception as e:
-                return jsonify({'message': 'Error occurred {}'.format(e)})
+                return self.error.internal_server_error('Error occurred {}'.format(e))
         else:
-            return jsonify({'message': 'User exists'})
+            return self.error.causes_conflict('User already exists')
 
 
 class LoginView(MethodView):
@@ -64,14 +62,14 @@ class LoginView(MethodView):
         try:
             # check if password exists
             if not email:
-                return jsonify({'message': 'No password provided'})
+                return self.error.bad_request('No password provided')
             if len(password) < 8:
-                return jsonify({'message': 'Password too short'})
+                return self.error.bad_request('Password too short')
             # check if email exists
             if not email:
-                return jsonify({'message': 'No email provided'})
+                return self.error.bad_request('No email provided')
             if not self.helpers.email_valid(email):
-                return jsonify({'message': 'Invalid email'})
+                return self.error.bad_request('Invalid email')
             # Get the user object
             user = User.query.filter_by(email=email).first()
             # Authenticate the user
@@ -79,12 +77,13 @@ class LoginView(MethodView):
                 # Generate the access token to be used in header
                 access_token = user.generate_token(user.id)
                 if access_token:
-                    return jsonify({
+                    response = jsonify({
                         'message': 'Log in successful',
                         'access_token': access_token.decode()
                     })
+                    return self.success.complete_request(response)
             else:
-                return jsonify({'message': 'Invalid email or password'})
+                return self.error.unauthorized('Invalid email or password')
         except Exception as e:
             return str(e)
 

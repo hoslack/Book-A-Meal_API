@@ -58,7 +58,7 @@ class Error(BaseClass):
         return make_response(response), self.forbidden_status
 
     def bad_request(self, message):
-        """ When the equest made is in the wrong format """
+        """ When the request made is in the wrong format """
         response = jsonify({"error": message})
         return make_response(response), self.bad_request_status
 
