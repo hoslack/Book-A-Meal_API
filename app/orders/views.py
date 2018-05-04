@@ -2,6 +2,7 @@ from flask.views import MethodView
 from flask import jsonify
 from flask import request
 from app.models.models import Order
+from app.helpers.helpers import Helpers
 from app.decorators.decorators import token_required, admin_only
 from . import orders_blueprint
 
@@ -10,14 +11,17 @@ class OrdersView(MethodView):
     """A class based view for handling orders requests"""
     def __init__(self):
         super().__init__()
+        self.helpers = Helpers()
 
     @token_required
     def post(self, user_id):
         """This method is for adding an order into the database"""
         json_data = request.get_json(force=True)
-        customer_id = json_data.get('customer_id')
         price = json_data.get('price')
         meal_name = json_data.get('meals')
+        auth_header = request.headers.get('Authorization')
+        access_token = auth_header.split(" ")[1]
+        customer_id = self.helpers.current_user(access_token)
 
         # check if meals exist
         meal = Order.query.filter_by(meals=meal_name).first()

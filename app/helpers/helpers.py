@@ -1,4 +1,5 @@
 import re
+from app.models.models import User
 
 
 class Helpers(object):
@@ -13,3 +14,7 @@ class Helpers(object):
             return True
         else:
             return False
+
+    def current_user(self, token):
+        user_id = User.decode_token(token)
+        return user_id
