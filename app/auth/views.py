@@ -1,5 +1,4 @@
 from flask.views import MethodView
-from flask import jsonify
 from flask import request
 from app.models.models import User
 from app.custom_http_respones.responses import Success, Error
