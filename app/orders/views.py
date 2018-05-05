@@ -95,6 +95,8 @@ class OrderView(MethodView):
                 return jsonify({'message': 'Invalid price'})
             if not isinstance(meal_name, str):
                 return jsonify({'message': 'Invalid meal name'})
+            if order.meals == meal_name:
+                return jsonify({'message': 'Cannot edit to the same meal'})
             order.meals = meal_name
             order.price = price
             order.save()
