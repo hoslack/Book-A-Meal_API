@@ -1,9 +1,9 @@
 from flask.views import MethodView
-from flask import jsonify
 from flask import request
 from app.models.models import Order
 from app.helpers.helpers import Helpers
 from app.decorators.decorators import token_required, admin_only
+from app.custom_http_respones.responses import Success, Error
 from . import orders_blueprint
 
 
@@ -12,6 +12,8 @@ class OrdersView(MethodView):
     def __init__(self):
         super().__init__()
         self.helpers = Helpers()
+        self.success = Success()
+        self.error = Error()
 
     @token_required
     def post(self, user_id):
@@ -21,7 +23,7 @@ class OrdersView(MethodView):
         meal1 = json_data.get('meal1')
         meal2 = json_data.get('meal2')
         if not self.helpers.meal_in_db(meal1) or not self.helpers.meal_in_db(meal2):
-            return jsonify({'message': 'one or both meals not in db'})
+            return self.error.not_found('One or both meals not in db')
         meal_name = '{} and {}'.format(meal1, meal2)
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
@@ -34,24 +36,24 @@ class OrdersView(MethodView):
             try:
                 # check if meal name exists exists
                 if not customer_id:
-                    return jsonify({'message': 'No customer id provided'})
+                    return self.error.bad_request('No customer id provided')
                 if not isinstance(customer_id, int):
-                    return jsonify({'message': 'Invalid customer id'})
+                    return self.error.bad_request('Invalid customer id')
                 # check if price exists
                 if not price:
-                    return jsonify({'message': 'No price provided'})
+                    return self.error.bad_request('No price provided')
                 if not isinstance(price, int):
-                    return jsonify({'message': 'Invalid price'})
+                    return self.error.bad_request('Invalid price')
                 if not isinstance(meal_name, str):
-                    return jsonify({'message': 'Invalid meal name'})
+                    return self.error.bad_request('Invalid meal name')
 
                 order = Order(customer_id=customer_id, meals=meal_name, price=price)
                 order.save()
-                return jsonify({'message': 'Success', 'id': order.id})
+                return self.success.create_resource('Success, id:'.format(order.id))
             except Exception as e:
-                return jsonify({'message': 'Error occurred {}'.format(e)})
+                return self.error.internal_server_error('Error occurred {}'.format(e))
         else:
-            return jsonify({'message': 'order exists'})
+            return self.error.causes_conflict('Order exists')
 
     @admin_only
     def get(self, user_id):
@@ -64,9 +66,9 @@ class OrdersView(MethodView):
             for order in orders:
                 order_data.append({'id': order.id, 'customer_id': order.customer_id, 'meals': order.meals,
                                    'price': order.price})
-            return jsonify({'data': order_data})
+            return self.success.complete_request({'data': order_data})
         except Exception as e:
-            return jsonify({'Error occurred'.format(e)})
+            return self.error.internal_server_error('Error occurred'.format(e))
 
 
 class OrderView(MethodView):
@@ -74,45 +76,47 @@ class OrderView(MethodView):
     def __init__(self):
         super().__init__()
         self.helpers = Helpers()
+        self.success = Success()
+        self.error = Error()
 
     @token_required
     def put(self, user_id, order_id):
         """This a method for handling editing of a single order"""
         if not order_id:
-            return jsonify({'message': 'Please provide the order ID'})
+            return self.error.bad_request('Please provide the order ID')
         if not isinstance(order_id, int):
-            return jsonify({'message': 'Invalid order ID'})
+            return self.error.bad_request('Invalid order ID')
         json_data = request.get_json(force=True)
         price = json_data.get('price')
         meal1 = json_data.get('meal1')
         meal2 = json_data.get('meal2')
         if not self.helpers.meal_in_db(meal1) or not self.helpers.meal_in_db(meal2):
-            return jsonify({'message': 'one or both meals not in db'})
+            return self.error.causes_conflict('One or both meals not in db')
         meal_name = '{} and {}'.format(meal1, meal2)
 
         # check if order exists
         order = Order.query.filter_by(id=order_id).first()
         try:
             if not order:
-                return jsonify({'message': 'Order does not exist'})
+                return self.error.bad_request('Order does not exist')
             # check if order name exists
             if not meal_name:
-                return jsonify({'message': 'No meals provided'})
+                return self.error.bad_request('No meals provided')
             # check if price exists
             if not price:
-                return jsonify({'message': 'No price provided'})
+                return self.error.bad_request('No price provided')
             if not isinstance(price, int):
-                return jsonify({'message': 'Invalid price'})
+                return self.error.bad_request('Invalid price')
             if not isinstance(meal_name, str):
-                return jsonify({'message': 'Invalid meal name'})
+                return self.error.bad_request('Invalid meal name')
             if order.meals == meal_name:
-                return jsonify({'message': 'Cannot edit to the same meal'})
+                return self.error.causes_conflict('Cannot edit to the same meal')
             order.meals = meal_name
             order.price = price
             order.save()
-            return jsonify({'message': 'Success'})
+            return self.success.create_resource('Success')
         except Exception as e:
-            return jsonify({'message': 'Error occurred {}'.format(e)})
+            return self.error.internal_server_error('Error occurred {}'.format(e))
 
 
 #  define the order class-based view
