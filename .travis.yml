@@ -7,6 +7,10 @@ python:
 before_install:
   - "pip install -U pip"
   - "python setup.py install"
+services:
+  - postgresql
+before_script:
+  - psql -c "CREATE DATABASE test_db;" -U postgres
 install: "pip install -r requirements.txt"
 # command to run tests
 script:
