@@ -1,12 +1,13 @@
+[run]
+branch = True
+source = app
 [report]
-omit=
-    */python?.?/*
-    *site-packages/*
-    *site-packages/nose/*
-    *__init__*
-    *tests/*
-exclude_lines=
+exclude_lines =
     pragma: no cover
-    raise Exception()
-    except
-repr
+    def __repr__
+    if self\.debug
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+ignore_errors = True
