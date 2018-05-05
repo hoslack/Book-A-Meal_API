@@ -27,7 +27,6 @@ coverage.xml
 
 
 # Flask stuff:
-instance/
 .webassets-cache
 
 # dotenv

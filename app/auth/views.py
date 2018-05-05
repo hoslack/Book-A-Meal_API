@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask import request
+from flask import request, jsonify
 from app.models.models import User
 from app.custom_http_respones.responses import Success, Error
 from app.helpers.helpers import Helpers
@@ -117,8 +117,7 @@ class LoginView(MethodView):
                 # Generate the access token to be used in header
                 access_token = user.generate_token(user.id)
                 if access_token:
-                    response = 'Log in successful,  access_token: {}'.format(access_token.decode())
-                    return self.success.complete_request(response)
+                    return jsonify({'message': 'Log in successful', 'token': access_token.decode()}), 200
             else:
                 return self.error.unauthorized('Invalid email or password')
         except Exception as e:
