@@ -26,8 +26,23 @@ class TestAuth(unittest.TestCase):
         res = self.client().post('/auth/signup/', data=json.dumps({"email": "hos@gmail.com", "password":"12345678"}))
         self.assertEqual(res.status_code, self.success.created_status)
 
+    def test_registration_admin_with_no_token(self):
+        """Test user registration works correctly"""
+        res = self.client().post('/auth/signup/admin/', data=json.dumps({"email": "hos@gmail.com", "password":"12345678"}))
+        self.assertEqual(res.status_code, self.error.unauthorized_status)
+
     def test_signup_without_credentials(self):
         res = self.client().post('/auth/signup/', data=json.dumps({}))
+        self.assertEqual(res.status_code, self.error.bad_request_status)
+
+    def test_signup_without_email(self):
+        """Test if user can sign in with no email"""
+        res = self.client().post('/auth/signup/', data=json.dumps({"email": "hos@gmail.com"}))
+        self.assertEqual(res.status_code, self.error.bad_request_status)
+
+    def test_signup_without_password(self):
+        """Test if user can sign in with no password"""
+        res = self.client().post('/auth/signup/', data=json.dumps({"password": "12345678"}))
         self.assertEqual(res.status_code, self.error.bad_request_status)
 
     def test_signup_with_same_email(self):
@@ -39,3 +54,30 @@ class TestAuth(unittest.TestCase):
         res = self.client().post('/auth/signup/', data=json.dumps({"email": "hos2@gmail.com", "password": "12345"}))
         self.assertEqual(res.status_code, self.error.bad_request_status)
 
+    def test_signup_with_invalid_email(self):
+        res = self.client().post('/auth/signup/', data=json.dumps({"email": "hos2gmail.com", "password": "12345"}))
+        self.assertEqual(res.status_code, self.error.bad_request_status)
+
+    def test_successful_login(self):
+        self.client().post('/auth/signup/', data=json.dumps({"email": "hos@gmail.com", "password": "12345678"}))
+        res = self.client().post('/auth/login/', data=json.dumps({"email": "hos@gmail.com", "password": "12345678"}))
+        self.assertEqual(res.status_code, self.success.ok_status)
+
+    def test_login_non_existent_user(self):
+        res = self.client().post('/auth/login/', data=json.dumps({"email": "randomuserthatdoesnotexist@gmail.com",
+                                                                  "password": "12345678"}))
+        self.assertEqual(res.status_code, self.error.unauthorized_status)
+
+    def test_login_with_no_credentials(self):
+        res = self.client().post('/auth/login/', data=json.dumps({}))
+        self.assertEqual(res.status_code, self.error.bad_request_status)
+
+    def test_login_with_no_email(self):
+        res = self.client().post('/auth/signup/', data=json.dumps({"password": "12345678"}))
+        self.assertEqual(res.status_code, self.error.bad_request_status)
+
+
+
+
+if __name__ == "__main__":
+    unittest.main()
