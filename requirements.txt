@@ -20,6 +20,7 @@ MarkupSafe==1.0
 more-itertools==4.1.0
 pluggy==0.6.0
 psycopg2==2.7.4
+psycopg2-binary==2.7.4
 py==1.5.3
 pycparser==2.18
 PyJWT==1.6.1
