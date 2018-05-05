@@ -1,5 +1,5 @@
 # Book-A-Meal
-[![Coverage Status](https://coveralls.io/repos/github/hoslack/Book-A-Meal_API/badge.svg?branch=master)](https://coveralls.io/github/hoslack/Book-A-Meal_API?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6db862e36696450789e6767b77db5672)](https://www.codacy.com/app/hoslack/Book-A-Meal_API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hoslack/Book-A-Meal_API&amp;utm_campaign=Badge_Grade) [![Requirements Status](https://requires.io/github/hoslack/Book-A-Meal_API/requirements.svg?branch=endpoints)](https://requires.io/github/hoslack/Book-A-Meal_API/requirements/?branch=endpoints) 
+[![Build Status](https://travis-ci.org/hoslack/Book-A-Meal_API.svg?branch=develop)](https://travis-ci.org/hoslack/Book-A-Meal_API) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/6db862e36696450789e6767b77db5672)](https://www.codacy.com/app/hoslack/Book-A-Meal_API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hoslack/Book-A-Meal_API&amp;utm_campaign=Badge_Coverage) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6db862e36696450789e6767b77db5672)](https://www.codacy.com/app/hoslack/Book-A-Meal_API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hoslack/Book-A-Meal_API&amp;utm_campaign=Badge_Grade) [![Requirements Status](https://requires.io/github/hoslack/Book-A-Meal_API/requirements.svg?branch=endpoints)](https://requires.io/github/hoslack/Book-A-Meal_API/requirements/?branch=endpoints) 
 ## What? 
 Book-A-Meal is an application that allows customers to make food orders and helps the food vendor know what the customers want to eat.
 ## Features
@@ -103,18 +103,18 @@ These you can test in your browser, or  Postman, or curl
 
 URL Endpoint	|               HTTP Request   | Resource Accessed | Access Type|
 -------------------|-----------------|-------------|------------------
-/api/v1/auth/signup   |      POST	| Register a new user|public
-/api/v1/auth/login	  |     POST	| Login and add user to session|public
-/api/v1/auth/logout	  |     POST	| Logout and delete session|public
-/api/v1/meals	  |     GET	| Get all the meal options|Admin Only(Private)
-/api/v1/meals	              |      POST	|Add a meal option|Admin Only(Private)
-/api/v1/meals/<mealId>	              |      PUT	|     Update the information of a meal option|Admin Only(Private)
-/api/v1/meals/<mealId>            |  	DELETE	    | Remove a meal option | Admin Only(Private)
-/api/v1/menu/	          |      POST	|     Setup the menu for the day  |Admin Only(Private)
-/api/v1/menu/	          |      GET	| Get the menu for the day |Authenticated user(Private)
-/api/v1/orders  |           POST    |Select the meal option from the menu|Authenticated user(Private)
-/api/v1/orders/<orderId>     |     PUT	| Modify an order |Authenticated user(Private) (Time bound)
-/api/v1/orders|	GET	| Get all the orders  |Admin Only(Private)
+/auth/signup/   |      POST	| Register a new user|public
+/auth/login/	  |     POST	| Login and add user to session|public
+/auth/logout/	  |     POST	| Logout and delete session|public
+/meals/	  |     GET	| Get all the meal options|Admin Only(Private)
+/meals/	              |      POST	|Add a meal option|Admin Only(Private)
+/meals/<mealId>/	              |      PUT	|     Update the information of a meal option|Admin Only(Private)
+/meals/<mealId>/            |  	DELETE	    | Remove a meal option | Admin Only(Private)
+/menu/	          |      POST	|     Setup the menu for the day  |Admin Only(Private)
+/menu/	          |      GET	| Get the menu for the day |Authenticated user(Private)
+/orders/  |           POST    |Select the meal option from the menu|Authenticated user(Private)
+/orders/<orderId>/     |     PUT	| Modify an order |Authenticated user(Private) (Time bound)
+/orders/|	GET	| Get all the orders  |Admin Only(Private)
 
 
 ## Contributing
