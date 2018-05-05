@@ -1,5 +1,5 @@
 import re
-from app.models.models import User
+from app.models.models import User, Meal, Order
 
 
 class Helpers(object):
@@ -18,3 +18,10 @@ class Helpers(object):
     def current_user(self, token):
         user_id = User.decode_token(token)
         return user_id
+
+    def meal_in_db(self, meal):
+        checked_meal = Meal.query.filter_by(name=meal).first()
+        if checked_meal:
+            return True
+        else:
+            return False

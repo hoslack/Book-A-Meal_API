@@ -18,7 +18,11 @@ class OrdersView(MethodView):
         """This method is for adding an order into the database"""
         json_data = request.get_json(force=True)
         price = json_data.get('price')
-        meal_name = json_data.get('meals')
+        meal1 = json_data.get('meal1')
+        meal2 = json_data.get('meal2')
+        if not self.helpers.meal_in_db(meal1) or not self.helpers.meal_in_db(meal2):
+            return jsonify({'message': 'one or both meals not in db'})
+        meal_name = '{} and {}'.format(meal1, meal2)
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
         customer_id = self.helpers.current_user(access_token)
@@ -69,6 +73,7 @@ class OrderView(MethodView):
     """This is a class based view that handles the request made to a single order"""
     def __init__(self):
         super().__init__()
+        self.helpers = Helpers()
 
     @token_required
     def put(self, user_id, order_id):
@@ -78,8 +83,13 @@ class OrderView(MethodView):
         if not isinstance(order_id, int):
             return jsonify({'message': 'Invalid order ID'})
         json_data = request.get_json(force=True)
-        meal_name = json_data.get('meals')
         price = json_data.get('price')
+        meal1 = json_data.get('meal1')
+        meal2 = json_data.get('meal2')
+        if not self.helpers.meal_in_db(meal1) or not self.helpers.meal_in_db(meal2):
+            return jsonify({'message': 'one or both meals not in db'})
+        meal_name = '{} and {}'.format(meal1, meal2)
+
         # check if order exists
         order = Order.query.filter_by(id=order_id).first()
         try:
