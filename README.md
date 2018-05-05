@@ -1,4 +1,5 @@
 # Book-A-Meal
+[![Coverage Status](https://coveralls.io/repos/github/hoslack/Book-A-Meal_API/badge.svg?branch=master)](https://coveralls.io/github/hoslack/Book-A-Meal_API?branch=master) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6db862e36696450789e6767b77db5672)](https://www.codacy.com/app/hoslack/Book-A-Meal_API?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hoslack/Book-A-Meal_API&amp;utm_campaign=Badge_Grade) [![Requirements Status](https://requires.io/github/hoslack/Book-A-Meal_API/requirements.svg?branch=endpoints)](https://requires.io/github/hoslack/Book-A-Meal_API/requirements/?branch=endpoints) 
 ## What? 
 Book-A-Meal is an application that allows customers to make food orders and helps the food vendor know what the customers want to eat.
 ## Features
