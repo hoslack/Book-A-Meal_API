@@ -1,7 +1,7 @@
 from flask.views import MethodView
-from flask import jsonify
 from flask import request
 from app.models.models import MenuItem
+from app.custom_http_respones.responses import Success, Error
 from app.decorators.decorators import token_required, admin_only
 from . import menu_blueprint
 
@@ -10,6 +10,8 @@ class MenuView(MethodView):
     """A class based view for handling menu requests"""
     def __init__(self):
         super().__init__()
+        self.success = Success()
+        self.error = Error()
 
     @admin_only
     def post(self, user_id):
@@ -27,19 +29,19 @@ class MenuView(MethodView):
             try:
                 # check if price exists
                 if not price:
-                    return jsonify({'message': 'No price provided'})
+                    return self.error.bad_request('No price provided')
                 if not isinstance(price, int):
-                    return jsonify({'message': 'Invalid price'})
+                    return self.error.bad_request('Invalid price')
                 if not isinstance(meal_name, str):
-                    return jsonify({'message': 'Invalid meal names'})
+                    return self.error.bad_request('Invalid meal names')
 
                 menu_item = MenuItem(meals=meal_name, price=price)
                 menu_item.save()
-                return jsonify({'message': 'Success', 'id': menu_item.id})
+                return self.success.create_resource('Success, id: {}'.format(menu_item.id))
             except Exception as e:
-                return jsonify({'message': 'Error occurred {}'.format(e)})
+                return self.error.internal_server_error('Error occurred {}'.format(e))
         else:
-            return jsonify({'message': 'menu item exists'})
+            return self.error.causes_conflict('menu item exists')
 
     @token_required
     def get(self, user_id):
@@ -51,9 +53,9 @@ class MenuView(MethodView):
             #  make the data json serializable
             for item in menu_items:
                 menu_data.append({'id': item.id, 'meals': item.meals, 'price': item.price})
-            return jsonify({'data': menu_data})
+            return self.success.complete_request('data: {}'.format(menu_data))
         except Exception as e:
-            return jsonify({'Error occurred'.format(e)})
+            return self.error.internal_server_error('Error occurred'.format(e))
 
 
 #  define the menu class-based view
