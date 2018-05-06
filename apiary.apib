@@ -1,80 +1,322 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
 
-# book-a-meal
+# Book-A-Meal
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Book-A-Meal is an application that allows customers to make food orders and helps the food vendor know what the customers want to eat.:
+```
+Content-Type: application/json
+```
+Authorization for protected endpoints:
+```
+Authorization: Bearer + <access_token>
+```
+The `access_token` will be received
+after the user log in is successful.
 
-## Questions Collection [/questions]
+# Group Authentication
 
-### List All Questions [GET]
+## Sign Up [/auth/signup/]
 
-+ Response 200 (application/json)
+### Create Account[POST]
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+Create a new user account. A permanent admin can sign up other admins. 
+Normal sign up is for all customers
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "email": "hoslack@gmail.com",
+            "password": "12345678"
         }
 
 + Response 201 (application/json)
 
-    + Headers
+        {
+            "message" :"User created successfully"
+        }
 
-            Location: /questions/2
+## Login [/auth/login/]
 
-    + Body
+### Sign In [POST]
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
+A user can sign in with their email and password. 
+
+Authentication has been implemented using JWT. So the access-token is returned for previleged routes
+
++ Request (application/json)
+
+        {
+            "email": "hoslack@gmail.com",
+            "password": "12345678"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "access_token": "<token-here>"
+        }
+
+
+# Group Meals
+
+## Meals Endpoint [/meals/]
+
+### Create Meal [POST]
+
+This will create a meal. 
+
+**Note**: Authorization header with token is required. The user logged in should also
+be an admin.
+
++ Request (application/json)
+
+        {
+            "name": "ugali",
+            "price": 30.0
+        }
+
++ Response 201 (application/json)
+    
+        {
+            "message": "Success, id:<meal_id>"
+            
+        }
+
+
+### Get Meals [GET]
+
+This gets all the meals from the database. 
+
+**Note**: Authorization header with token is required. The user logged in should also
+be an admin.
+
++ Request (application/json)
+        
+
++ Response 200 (application/json)
+
+        {
+            "data": [
+                {
+                    "id": 1,
+                    "name": "ugali",
+                    "price": 100
+                },
+                {
+                    "id": 2,
+                    "name": "beef",
+                    "price": 200
+                },
+            ]
+        }
+
+
+## Meal Endpoint [/meals/{id}/]
+
+### Update Meal [PATCH]
+
+This will edit the meal with the given meal id.
+
++ Request (application/json)
+
+        {
+            "name": "pilau",
+            "price": 250
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "message": "Success"
+        }
+
+### Delete Meal [DELETE]
+
+This will delete the meal with the given meal id.
+
+
++ Request (application/json)
+
++ Response 200 (application/json)
+        {
+        "message": "Success"
+        }
+
+
+# Group Menu
+
+## Menu Endpoint [/menu/]
+
+### Create Menu [POST]
+
+This will create a menu item in the database. 
+
+
+
+**Note**: Authorization header with token is required. The user logged in should also
+be an admin.
+
++ Request (application/json)
+
+        {
+            "meal1": "ugali",
+            "meal2": "beef",
+            "price": 450
+        }
+
++ Response 201 (application/json)
+    
+        {
+            "message":"Success"
+        }
+
+
+### Get Meals in The Menu [GET]
+
+This gets all the meals created by the caterer. 
+
+**Note**: Authorization header with token is required. The user logged in should also
+be an admin.
+
++ Request (application/json)
+        
+
++ Response 200 (application/json)
+
+        {
+            
+            "data": [
+                {
+                    "id": 1,
+                    "meals": "rice and beef",
+                    "price": 500
+                    
+                },
+                {
+                    "id": 2,
+                    "meals": "ugali and fish",
+                    "price": 550
+                    
+                }
+            ]
+        }
+
+
+## Menu Endpoint [/menu/{id}/]
+
+### Update Menu [PATCH]
+
+This will update the menu with the given menu item id.
+
++ Request (application/json)
+
+        {
+            "meal1": "pilau",
+            "meal2": "mushrooms",
+            "price": 450
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "message": "Success"
+        }
+
+### Delete Menu [DELETE]
+
+This will delete the menu with the given menu item id.
+
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+
+# Group Orders
+
+## Orders Endpoint [/orders/]
+
+### Create Order [POST]
+
+This will create a order. For an order to be created, it will require a menu as 
+well as the id of the user creating the order.
+
+**Note**: The authentication header is required. 
+
++ Request (application/json)
+
+        {
+            "customer_id":3,
+            "meals":"rice and beans",
+            "price": 350
+        }
+
++ Response 201 (application/json)
+    
+        {
+            "message": "Success",
+            
+        }
+
+
+### Get Meals [GET]
+
+This gets all the meals created by the caterer. 
+
+**Note**: Authorization header with token is required. The user logged in should also
+be an admin.
+
++ Request (application/json)
+        
+
++ Response 200 (application/json)
+
+        {
+            
+            "data": [
+                {
+                    "id": 1,
+                    "meals": "Ugali and fish",
+                    "price": 540,
+                    "customer_id": 3
+                    
+                },
+                {
+                    
+                    "id": 1,
+                    "meals": "Rice and fish",
+                    "price": 550,
+                    "customer_id": 3
+                }
+            ]
+        }
+
+
+## Order Endpoint [/orders/{id}/]
+
+### Update Order [PATCH]
+
+This will update the order with the given id.
+
++ Request (application/json)
+
+        {
+            "meals": "Chicken and rice",
+            "price": 420,
+        }
+
++ Response 200 (application/json)
+    
+        {
+            "message": "Success"
+        }
+
+### Delete Order [DELETE]
+
+This will delete the order with the given order id.
+
+
++ Request (application/json)
+
++ Response 200 (application/json)
