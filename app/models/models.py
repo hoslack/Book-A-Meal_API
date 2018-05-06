@@ -31,7 +31,7 @@ class User(db.Model):
             # create a payload to be used in generating token
 
             payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=60),
+                'exp': datetime.utcnow() + timedelta(minutes=7200),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
