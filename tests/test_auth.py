@@ -29,7 +29,6 @@ class TestAuth(unittest.TestCase):
         res = self.client().post('/auth/signup/', data=json.dumps({"email": "hos@gmail.com", "password": "12345678"}))
         self.assertEqual(res.status_code, self.success.created_status)
 
-
     def test_registration_admin_with_no_token(self):
         """Test user registration of admin requires token"""
         res = self.client().post('/auth/signup/admin/', data=json.dumps({"email": "hos@gmail.com", "password":"12345678"}))
