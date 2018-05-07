@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask import request
+from flask import request, jsonify
 from app.models.models import Meal
 from app.custom_http_respones.responses import Success, Error
 from app.decorators.decorators import admin_only
@@ -35,7 +35,7 @@ class MealsView(MethodView):
                     return self.error.bad_request('Invalid price')
                 meal = Meal(name=name, price=price)
                 meal.save()
-                return self.success.create_resource('Success, id:{}'.format(meal.id))
+                return jsonify({"message": "Success", "id": meal.id})
             except Exception as e:
                 return self.error.internal_server_error('Error occurred {}'.format(e))
         else:
@@ -85,6 +85,8 @@ class MealView(MethodView):
                 return self.error.bad_request('Invalid price')
             if not isinstance(name, str):
                 return self.error.bad_request('Invalid name')
+            if meal.name == name:
+                return self.error.causes_conflict('Cannot edit meal with same name')
             meal.name = name
             meal.price = price
             meal.save()

@@ -118,7 +118,7 @@ class LoginView(MethodView):
                 access_token = user.generate_token(user.id)
                 if access_token:
                     token = access_token.decode()
-                    return make_response(jsonify({"hello": "hey"}))
+                    return make_response(jsonify({"token": token})), 200
             else:
                 return self.error.unauthorized('Invalid email or password')
         except Exception as e:

@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask import request
+from flask import request, jsonify
 from app.models.models import Order
 from app.helpers.helpers import Helpers
 from app.decorators.decorators import token_required, admin_only
@@ -49,7 +49,7 @@ class OrdersView(MethodView):
 
                 order = Order(customer_id=customer_id, meals=meal_name, price=price)
                 order.save()
-                return self.success.create_resource('Success, id:'.format(order.id))
+                return jsonify({'message': 'Success', 'id': order.id}), 201
             except Exception as e:
                 return self.error.internal_server_error('Error occurred {}'.format(e))
         else:

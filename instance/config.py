@@ -23,6 +23,7 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/test_db'
 
 
+
 class ProductionConfig(Config):
     """This is the production configuration class"""
     DEBUG = False
