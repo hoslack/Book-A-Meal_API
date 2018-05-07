@@ -24,9 +24,10 @@ class Success(BaseClass):
         response = jsonify({"message": message})
         return make_response(response), self.ok_status
 
-    def create_resource(self, resource):
+    def create_resource(self, message):
         """ Creation of any Resource """
-        return make_response(resource), self.created_status
+        response = jsonify({"message": message})
+        return make_response(response), self.created_status
 
 
 class Error(BaseClass):
